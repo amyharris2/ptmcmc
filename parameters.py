@@ -58,10 +58,6 @@ intercepts = np.arange(-1.0e-1, 1.0e-1, 1.0e-6)
 min_wav = 8470
 max_wav = 8940
 
-# # Specify wavelength range of template 
-# template_min_wav = 8300.	
-# template_max_wav = 9000.	
-
 # Enter True to exclude a region within the min max wavelength range, or False
 # to not.
 exclude_region = False
