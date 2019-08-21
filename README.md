@@ -16,37 +16,43 @@ Files included:
 		https://github.com/willvousden/ptemcee for details, although the version provided here is 
 		older and I have slightly modified it). 
 
-	- ptmcmc.py 
+	- ptmcmc.py (16KB)
 		- this is the ptmcmc module that computes stellar parameters of input spectra. Some inputs 
 		are required, see below. The ptmcmc runs with the provided template set as default, but it 
 		can process (crop, rotationally broaden, smooth and rebin) your own templates, and put the 
 		processed templates into a grid for use with ptmcmc. See parameters.py. 
 
-	- parameters.py
+	- parameters.py (5KB)
 		- this is where the parameters for the ptmcmc module are stored. In the most basic case, 
-		only the path to a list of spectra to be processed, and the path to a write directory, are 
-		required. The rest of the parameters are suitable for the default case of analysing the CaT
-		region of WEAVE-like LR spectra - tweak if you desire.
+		only the path to the fits file containing spectral data, and the path to a write directory, 
+		are required. The rest of the parameters are suitable for the default case of analysing the CaT
+		region of WEAVE-like LR BA spectra - tweak if you desire.
 
-	- example folder (1.92MB)
-		- targets folder including 6 fits files of required form for input, and a list of these.  
+	- example folder (0.1KB)
+		- targets folder including a list of specific spectra to analyse. Put the stacked_1003689.fit
+		table in here if you wish to run the example (see 'Additional files to be downloaded', below).  
 		- results folder, initially empty.
 		
-Additional file to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/templates/:
+Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/:
 
 	- templates.zip (288MB)
 		- 1134 templates smoothed to a FWHM ~ 1.3A and rebinned to 0.25A sampling, covering 
 		6000 - 9000 A.
 		- template_grid.npy is a table containing the flux data of all templates with 
 		5000 =< Teff =< 18000, 2.5 =< logg =< 5, 0 =< vsini =< 300.
-
+	
+	- stacked_1003689.fit (274MB)
+		-  A fits table that contains spectral information. Download this and place it in 
+		example/targets/ if you wish to run the example. See below for more details about the 
+		input table.
 
 
 Installation: 
 	
 	1) Download or clone this repository and unpack.
-	2) Download templates.zip from http://star.herts.ac.uk/~amy/PTMCMC/templates/ and unpack. Put the 
-	templates/ folder into the unpacked repository from step 1.
+	2) Download templates.zip and stacked_1003689.fit from http://star.herts.ac.uk/~amy/PTMCMC/ 
+	and unpack. Put the templates/ folder into the unpacked repository from step 1. Put the 
+	stacked_1003689.fit file into example/targets/.
 	3) Ensure required software is installed, including the provided 'ptemcee' module (see below).
 	4) ptmcmc.py can now be run directly from the terminal.
 	
@@ -66,29 +72,58 @@ Installation:
 			- The ptemcee module 
 				- use provided version (the version available at 
 				https://github.com/willvousden/ptemcee is currently not compatible)
-				- unpack and install using 'python setup.py install' command
+				- unpack ptemcee-1.0.0.zip and install using 'python setup.py install' 
+				command inside ptemcee-1.0.0/ folder.
 
 
 Usage:
 
 	The inputs:
 		The following are the minimum required inputs to be entered in parameters.py:
-			- the path to a list of target spectra to be analysed. The list file should include
-			paths to spectra.
-				- target spectra should be fits files, similar to the OpR3 spectra files. The
-				following columns are required:
-					- 'wavelength'
-					- 'final_spectra'
-					- 'spectra_before_sky_subtraction'
-					- 'Calibration_function'
-					*NOTE: THE FLUX DATA SHOULD BE UNNORMALISED*
-			- the path to the desired write directory 
+			- the path to a fits table to that contains the spectral information. The input table 
+			is expected to be of the form provided by CASU; it should have the following extensions:
+				
+				-Extension 0 (PHU): This is the primary header unit. There will be no data in 
+				this HDU. The header will have all the general information about the observation. 
+
+				- Extension 1 (DATA): Final wavelength calibrated, sky subtracted and heliocentric
+				corrected spectra. Each spectrum is a row in the image and the number of rows is 
+				the number of fibres that were used to observe both objects and sky patches. All 
+				spectra are on a linear wavelength scale with exactly the same dispersion and 
+				wavelength range. The wavelength is in units of Angstroms. The spectral flux is in 
+				units of ADUs. 
+
+				- Extension 2 (IVAR): The inverse variance of each spectrum (similar to a weight
+				map). The variance was defined by the optimal extraction algorithm used and modified 
+				during all subsequent processing. Bad pixels will be flagged with an inverse variance
+				of zero. 
+
+				- Extension 3 (DATA_NOSS): The same spectra as in the first extension, but before sky
+				subtraction. These are only included as a means of assessing the quality of the sky
+				correction within an OB. It also allows for an alternative treatment of the background 
+				subtraction by the user. In files that represent the coaddition of spectra over many 
+				nights, these lose their meaning and will not be included. 
+
+				- Extension 4 (IVAR_NOSS): The inverse variance of the above. As with the spectra, 
+				these will only be included in files from a single OB. In files that represent the 
+				coaddition of spectra over many nights, these lose their meaning and will not be 
+				included. In files that represent the coaddition of spectra over many nights, these 
+				lose their meaning and will not be included. 
+
+				- Extension 5 (Calibration): Function used to calibrate the spectra obtained from WD.
+
+				- Extension 6 (Fibinfo): A binary FITS table with information about each fibre that 
+				was used in the observation 
+
+			- the path to the desired write directory.
 
 
 	To run the example:
-		- the default parameters for the ptmcmc.py module are those for the example.
-		- ptmcmc.py must be run from within the ptmcmc-package directory in the case of the example.
-		- once the results have been written, ptmcmc.py will not re-run unless the results are deleted.
+		- Ensure that you have downloaded the stacked_1003689.fit file (see 'Additional files to be
+		downloaded', above). Place this in example/targets/.
+		- The default parameters for the ptmcmc.py module are those for the example.
+		- Run ptmcmc.py from within the ptmcmc directory in the case of the example.
+		- Once the results have been written, ptmcmc.py will not re-run unless the results are deleted.
 
 
 	The outputs:
@@ -171,12 +206,12 @@ Usage:
 
 			The template set provided have span the following parameter space:
 			Teff: 5000-18000 K in steps of 500 K
-			logg: 3.0-5.0 in steps of 0.5
+			logg: 2.5-5.0 in steps of 0.5
 			vsini: 0-300 km/s in steps of 50 km/s
 
 			They were calculated assuming Solar abundances and they have a resolution of R=10000. 
 
-			The templates provided have been cropped (6000-9000 A), rebinned (sampling=0.25 A) and 
+			The templates provided have been cropped (6000-9000 A), rebinned (sampling=0.25A) and 
 			smoothed (sigma=0.48). The rebinning and smoothing are done in order to closely match the
 			templates to typical WEAVE LR spectra in the CaT region.
 
