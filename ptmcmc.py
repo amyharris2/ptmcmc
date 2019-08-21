@@ -342,10 +342,12 @@ def mcmc_one(t):
 if __name__ ==  '__main__':
 	if target_list == None:
 		print("Processing all BA stars in fits file")
+		ALLDATA = fits.open(data_file)
 		BA = []
-		for i in info['TARGID']:
+		for i in ALLDATA[6].data['TARGID']:
 			if 'LR-BA' in i:
 				BA.append(i)
+		ALLDATA.close()
 	else:
 		print("Processing BA stars specified in target list")
 		BA = np.genfromtxt(target_list, dtype=None, encoding=None)
