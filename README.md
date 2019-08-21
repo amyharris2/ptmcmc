@@ -203,22 +203,24 @@ Usage:
 
 	Template choice:
 		- The provided set:
-			The templates that come with this package have been provided by Dr. Marwan Gebran. They
-			were calculated using the approach of Gebran et al. (2016) and Palacios et al. (2010),
-			using SYNSPEC48 (Hubeny and Lanz, 1992) to calculate the spectra based on ATLAS9 model
-			atmospheres (Kurucz, 1992), which assume local thermodynamic equilibrium, plane parallel
-			geometry, and radiative and hydrostatic equilibrium. 
+			The templates that are used by default with this package have been provided by Dr. Marwan 
+			Gebran. They were calculated using the approach of Gebran et al. (2016) and Palacios et 
+			al. (2010), using SYNSPEC48 (Hubeny and Lanz, 1992) to calculate the spectra based on 
+			ATLAS9 model atmospheres (Kurucz, 1992), which assume local thermodynamic equilibrium, 
+			plane parallel geometry, and radiative and hydrostatic equilibrium. 
 
-			The template set provided have span the following parameter space:
+			The template set used span the following parameter space:
 			Teff: 5000-18000 K in steps of 500 K
 			logg: 2.5-5.0 in steps of 0.5
 			vsini: 0-300 km/s in steps of 50 km/s
 
 			They were calculated assuming Solar abundances and they have a resolution of R=10000. 
 
-			The templates provided have been cropped (6000-9000 A), rebinned (sampling=0.25A) and 
-			smoothed (sigma=0.48). The rebinning and smoothing are done in order to closely match the
-			templates to typical WEAVE LR spectra in the CaT region.
+			The templates provided have rebinned (sampling=0.25A) and smoothed (sigma=0.48), in order 
+			to closely match the templates to typical WEAVE LR spectra in the CaT region.
+			
+			You can download a bundle of the template set here: http://star.herts.ac.uk/~amy/PTMCMC/
+			They cover a wavelength range of 6000-9000 A. 
 
 		- To use your own templates:
 			The option to use your own template set is available. This module can process (crop, rebin,
