@@ -72,7 +72,8 @@ Installation:
 			- The ptemcee module 
 				- use provided version (the version available at 
 				https://github.com/willvousden/ptemcee is currently not compatible)
-				- unpack and install using 'python setup.py install' command
+				- unpack ptemcee-1.0.0.zip and install using 'python setup.py install' 
+				command inside ptemcee-1.0.0/ folder.
 
 
 Usage:
