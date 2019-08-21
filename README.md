@@ -33,13 +33,18 @@ Files included:
 		table in here if you wish to run the example (see 'Additional files to be downloaded', below).  
 		- results folder, initially empty.
 		
+	- templates folder (272KB)
+		- this folder includes a table (wavelength_data.dat) containing the template wavelength data 
+		corresponding to the flux data grid (template_grid.npy, see below). 
+		- download template_grid.npy and put it in here (see below). 
+		
 Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/:
 
-	- templates.zip (288MB)
-		- 1134 templates smoothed to a FWHM ~ 1.3A and rebinned to 0.25A sampling, covering 
-		6000 - 9000 A.
-		- template_grid.npy is a table containing the flux data of all templates with 
-		5000 =< Teff =< 18000, 2.5 =< logg =< 5, 0 =< vsini =< 300.
+	- template_grid.npy (103MB) 
+		- a table containing the flux data of 1134 templates spanning the following parameter 
+		space: 5000 =< Teff =< 18000, 2.5 =< logg =< 5, 0 =< vsini =< 300. The templates have been 
+		smoothed to a FWHM ~ 1.3A, rebinned to 0.25A sampling and cover 6000 - 9000 A. Download this
+		and put it in the templates/ folder. 
 	
 	- stacked_1003689.fit (274MB)
 		-  A fits table that contains spectral information. Download this and place it in 
@@ -257,9 +262,10 @@ Usage:
 
 			- Templates that don't require processing
 
-				If you have a set of templates that do not require processing, and you have a .npy 
-				file (named 'template_grid.npy') with the gridded flux data, you can use these with
-				the ptmcmc module by putting the grid file in the templates/ folder, along with (at
-				least) one template. The template will be used for the wavelength data, so all used
-				templates must have the same wavelength data, and the provided template must have the
-				corresponding wavelength data for the gridded flux data. 
+				If you have a set of templates that do not require processing, you need to make a .npy grid
+				file (named 'template_grid.npy') with the template flux data. You also need a table containing
+				the wavelength data of your templates (named 'wavelength_data.dat'). This should be a list
+				of the wavelengths covered by a template (see the 'wavelength_data.dat' file provided as an
+				example). The wavelength data must apply to all template flux data. You can use your provided 
+				.npy flux grid and .dat wavelength table with the ptmcmc module by replacing the provided files
+				in the templates/ folder.
