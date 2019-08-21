@@ -40,13 +40,13 @@ Files included:
 		
 Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/:
 
-	- template_grid.npy (103MB) 
+	- template_grid.npy (104MB) 
 		- a table containing the flux data of 1134 templates spanning the following parameter 
 		space: 5000 =< Teff =< 18000, 2.5 =< logg =< 5, 0 =< vsini =< 300. The templates have been 
 		smoothed to a FWHM ~ 1.3A, rebinned to 0.25A sampling and cover 6000 - 9000 A. Download this
 		and put it in the templates/ folder. 
 	
-	- stacked_1003689.fit (274MB)
+	- stacked_1003689.fit (275MB)
 		-  A fits table that contains spectral information. Download this and place it in 
 		example/targets/ if you wish to run the example. See below for more details about the 
 		input table.
