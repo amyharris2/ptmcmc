@@ -147,15 +147,10 @@ if not os.path.exists(write_directory + '/results'):
 if process_templates==False:
 	# location of folder containing this script
 	templatedirectory = os.path.dirname(os.path.abspath(__file__)) + '/templates/'
-	# the first template for the template wavelength data
-	templatefile = glob.glob(templatedirectory+'*')[0]
-	if templatefile == 'template_grid.npy':
-		templatefile = glob.glob(templatedirectory+'*')[1]
 	# loading the template flux grid
 	flux_data_all = np.load(templatedirectory + 'template_grid.npy')
-	templatewavelength = np.loadtxt(templatefile, unpack=True, usecols=[0])
-	# templatemask = (templatewavelength > template_min_wav) & (templatewavelength < template_max_wav)
-	# templatewavelength = templatewavelength[templatemask]
+	#loading the wavelength data
+	templatewavelength = np.loadtxt(templatedirectory + 'wavelength_data.dat')
 else:
 	# the first template for the template wavelength data
 	flux_data_all = np.load(template_write_directory + 'template_grid.npy')
