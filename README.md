@@ -33,7 +33,7 @@ Files included:
 		table in here if you wish to run the example (see 'Additional files to be downloaded', below).  
 		- results folder, initially empty.
 		
-Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/templates/:
+Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/:
 
 	- templates.zip (288MB)
 		- 1134 templates smoothed to a FWHM ~ 1.3A and rebinned to 0.25A sampling, covering 
@@ -50,9 +50,9 @@ Additional files to be downloaded from http://star.herts.ac.uk/~amy/PTMCMC/templ
 Installation: 
 	
 	1) Download or clone this repository and unpack.
-	2) Download templates.zip and stacked_1003689.fit from 
-	http://star.herts.ac.uk/~amy/PTMCMC/templates/ and unpack. Put the templates/ folder into the 
-	unpacked repository from step 1. Put stacked_1003689.fit into example/targets/
+	2) Download templates.zip and stacked_1003689.fit from http://star.herts.ac.uk/~amy/PTMCMC/ 
+	and unpack. Put the templates/ folder into the unpacked repository from step 1. Put the 
+	stacked_1003689.fit file into example/targets/.
 	3) Ensure required software is installed, including the provided 'ptemcee' module (see below).
 	4) ptmcmc.py can now be run directly from the terminal.
 	
