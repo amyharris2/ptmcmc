@@ -214,9 +214,10 @@ def mcmc_one(t):
 		return
 
 	# specify unnormalised calibrated flux
-	final_spectra = ALLDATA[1].data[info['TARGID'] == t][0]
-	spectra_before_sky_subtraction = ALLDATA[3].data[info['TARGID'] == t][0]
-	Calibration_function = ALLDATA[5].data[info['TARGID'] == t][0]
+	with fits.open(data_file) as ALLDATA:
+		final_spectra = ALLDATA[1].data[info['TARGID'] == t][0]
+		spectra_before_sky_subtraction = ALLDATA[3].data[info['TARGID'] == t][0]
+		Calibration_function = ALLDATA[5].data[info['TARGID'] == t][0]
 	flux = final_spectra * Calibration_function * 1.0e18
 
 	# restrict to desired wavelength range
@@ -337,15 +338,26 @@ def mcmc_one(t):
 if __name__ ==  '__main__':
 	if target_list == None:
 		print("Processing all BA stars in fits file")
-		ALLDATA = fits.open(data_file)
 		BA = []
-		for i in ALLDATA[6].data['TARGID']:
-			if 'LR-BA' in i:
-				BA.append(i)
-		ALLDATA.close()
+		with fits.open(data_file) as ALLDATA:
+			for i in ALLDATA[6].data['TARGID']:
+				if 'LR-BA' in i:
+					BA.append(i)
 	else:
 		print("Processing BA stars specified in target list")
-		BA = np.genfromtxt(target_list, dtype=None, encoding=None)
+		targlist = np.genfromtxt(target_list, dtype=None, encoding=None)
+		BA = []
+		with fits.open(data_file) as ALLDATA:
+			for targ in targlist:
+				try: 
+					idx=list(ALLDATA[6].data['FIBREID']).index(targ)
+					BA.append(ALLDATA[6].data['TARGID'][idx])
+				except:
+					try:
+						idx=list(ALLDATA[6].data['TARGID']).index(targ)
+						BA.append(ALLDATA[6].data['TARGID'][idx])
+					except:	
+						print(str(targ)+": Cant find either FIBREID or TARGID in input table.")
 
 ALLDATA = None
 info = None
@@ -357,23 +369,23 @@ def set_globals():
     global wavelength
     global targetmask
 
-    ALLDATA = fits.open(data_file)
-    head0 = ALLDATA[0].header
-    info = ALLDATA[6].data
-    data1 = ALLDATA[1].data
-    head1 = ALLDATA[1].header
-    wave0 = head1['CRVAL1']  
-    increm = head1['CD1_1']
-    wavelength = np.array([wave0+increm*a for a in range(len(data1[1]))])
-    targetmask = (wavelength > min_wav) & (wavelength < max_wav)
-    wavelength = wavelength[targetmask]
+    with fits.open(data_file) as ALLDATA:
+	    head0 = ALLDATA[0].header
+	    info = ALLDATA[6].data
+	    data1 = ALLDATA[1].data
+	    head1 = ALLDATA[1].header
+	    wave0 = head1['CRVAL1']  
+	    increm = head1['CD1_1']
+	    wavelength = np.array([wave0+increm*a for a in range(len(data1[1]))])
+	    targetmask = (wavelength > min_wav) & (wavelength < max_wav)
+	    wavelength = wavelength[targetmask]
 
 
 if multiprocess==True:
 	from multiprocessing import Pool
 	if __name__ ==  '__main__':
 		pool = Pool(processes=process_no, initializer=set_globals)
-		it = pool.imap(mcmc_one, BA)
+		it = pool.imap_unordered(mcmc_one, BA)
 		for i in range(len(BA)):
 			it.next()
 		print(datetime.now() - startTime)
@@ -384,5 +396,4 @@ else:
 	for i in BA:
 		mcmc_one(i)
 
-	ALLDATA.close()
 	print(datetime.now() - startTime)
