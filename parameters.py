@@ -13,7 +13,7 @@ write_directory = 'example/results/'
 
 # By default, all BA stars in data_file will be processed. If you do not wish 
 # to process all BA stars in the data_file, enter the path to a list of 
-# TARGID's of BA stars to be processed. Otherwise, enter 'None'.
+# TARGID's or FIBREID's of BA stars to be processed. Otherwise, enter 'None'.
 target_list = None # 'example/targets/target_list'
 
 # Enter False to process the spectra one-by-one, or enter True to process
