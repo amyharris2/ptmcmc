@@ -13,7 +13,6 @@ import sys
 # matplotlib.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}",
 #                                    r"\usepackage{color}"]
 # matplotlib.use('Agg')
-from tqdm import tqdm
 from ptemcee import Sampler as PTSampler
 import matplotlib.pyplot as plt
 ##import corner
