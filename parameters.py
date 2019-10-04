@@ -1,20 +1,5 @@
 import numpy as np
-########################### MINIMUM INPUTS REQUIRED ###########################
-
-### ENTER PATH TO FITS DATA FILE ###
-
-data_file = 'example/targets/stacked_1003689.fit'
-
-### ENTER WRITE DIRECTORY ###
-
-write_directory = 'example/results/'
-
-###############################################################################
-
-# By default, all BA stars in data_file will be processed. If you do not wish 
-# to process all BA stars in the data_file, enter the path to a list of 
-# TARGID's or FIBREID's of BA stars to be processed. Otherwise, enter 'None'.
-target_list = None # 'example/targets/target_list'
+##############################################################################
 
 # Enter False to process the spectra one-by-one, or enter True to process
 # multiple spectra simultaneously over multiple cores. If True, enter number
@@ -36,10 +21,10 @@ progress_bar = True
 
 ### MCMC SAMPLE PARAMETERS ### 
 
-nwalkers = 200		# number of walkers
-burn = 250			# number of burn-in steps
-runs = 2000			# number of steps
-ntemps = 5			# number of temperatures
+nwalkers = 20		# number of walkers
+burn = 25			# number of burn-in steps
+runs = 200			# number of steps
+ntemps = 3			# number of temperatures
 
 ### PARAMETER BOUNDARIES ###
 
