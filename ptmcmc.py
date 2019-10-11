@@ -33,6 +33,7 @@ parser.add_argument("--params", type=str, required=False, default='parameters.py
 args = parser.parse_args()
 write_directory = args.outdir[0]
 target_list = args.targlist[0]
+data_file = args.infile[0]
 
 
 # processing (cropping, smoothing, rebinning, rotational broadening) templates if required 
@@ -225,7 +226,7 @@ def mcmc_one(t):
 
 	# checking if spectrum file exists, and if result already written
 	if os.path.exists(write_directory + '/results/' + os.path.splitext(os.path.basename(t))[0] + '_results'):
-		print('result already exists, skipping')
+		print('WARNING: result for '+t+' already exists, skipping')
 		return
 
 	# specify unnormalised calibrated flux
@@ -233,6 +234,13 @@ def mcmc_one(t):
 		final_spectra = ALLDATA[1].data[info['TARGID'] == t][0]
 		spectra_before_sky_subtraction = ALLDATA[3].data[info['TARGID'] == t][0]
 		Calibration_function = ALLDATA[5].data[info['TARGID'] == t][0]
+		try: 
+			idx=list(ALLDATA[6].data['FIBREID']).index(t)
+		except:
+			idx=list(ALLDATA[6].data['TARGID']).index(t)
+		NSPEC = ALLDATA[6].data['Nspec'][idx]
+		FIBREID = ALLDATA[6].data['FIBREID'][idx]
+		CNAME = ALLDATA[6].data['CNAME'][idx]
 	flux = final_spectra * Calibration_function * 1.0e18
 
 	# restrict to desired wavelength range
@@ -343,8 +351,8 @@ def mcmc_one(t):
 	plt.close()
 
 	# write results
-	tab = open(write_directory + '/results/' + t +  '_results', "a+")
-	tab.write(np.str(NSPEC[nn]) + " " + np.str(FIBREID[nn]) + " " + np.str(CNAME[nn]) + " " + t + " " + np.str(acceptance_r) + " " + np.str(Teff_r) + " " + np.str(Teffminus_r) + " " + np.str(Teffplus_r) + " " + np.str(logg_r) + " " + np.str(loggminus_r) + " " + np.str(loggplus_r) + " " + np.str(vsini_r) + " " + np.str(vsiniminus_r) + " " + np.str(vsiniplus_r) + " " + np.str(RV_r) + " " + np.str(RVminus_r) + " " + np.str(RVplus_r) + " " + np.str(slope_r) + " " + np.str(slopeminus_r) + " " + np.str(slopeplus_r) + " " + np.str(intercept_r) + " " + np.str(interceptminus_r) + " " + np.str(interceptplus_r) + "\n")
+	tab = open(write_directory + '/results/' + t +  '_results', "w")
+	tab.write(np.str(NSPEC) + " " + np.str(FIBREID) + " " + np.str(CNAME) + " " + t + " " + np.str(acceptance_r) + " " + np.str(Teff_r) + " " + np.str(Teffminus_r) + " " + np.str(Teffplus_r) + " " + np.str(logg_r) + " " + np.str(loggminus_r) + " " + np.str(loggplus_r) + " " + np.str(vsini_r) + " " + np.str(vsiniminus_r) + " " + np.str(vsiniplus_r) + " " + np.str(RV_r) + " " + np.str(RVminus_r) + " " + np.str(RVplus_r) + " " + np.str(slope_r) + " " + np.str(slopeminus_r) + " " + np.str(slopeplus_r) + " " + np.str(intercept_r) + " " + np.str(interceptminus_r) + " " + np.str(interceptplus_r) + "\n")
 	tab.close()
 
 	targ_end = datetime.now() - targ_start
@@ -356,89 +364,75 @@ def make_output_fits():
 	for i in output_files:
 		with open(i) as outf:
 			all_res.append(outf.read().split())
-
 	t = Table(rows=all_res, names=('NSPEC', 'FIBREID', 'CNAME', 'TARGID', 'Acceptance', 'Teff', 'Teff_minus', 'Teff_plus', 'logg', 'logg_minus', 'logg_plus', 'vsini', 'vsini_minus', 'vsini_plus', 'RV', 'RV_minus', 'RV_plus', 'slope', 'slope_minus', 'slope_plus', 'intercept', 'intercept_minus', 'intercept_plus'))
-	t.write(write_directory+'results/all_results.fits', format='fits')
+	t.write(write_directory+'results/'+os.path.splitext(os.path.basename(args.infile[0]))[0]+'_ptmcmc.fits', format='fits', overwrite=False)
 
 
 
-for f in args.infile:
-	data_file = f
-	if __name__ ==  '__main__':
-		if target_list == 'all':
-			print("Processing all BA stars in fits file")
-			BA = []
-			NSPEC = []
-			FIBREID = []
-			CNAME = []
-			with fits.open(data_file) as ALLDATA:
-				for n,i in enumerate(ALLDATA[6].data['TARGID']):
-					if 'LR-BA' in i:
-						BA.append(i)
-						NSPEC.append(ALLDATA[6].data['Nspec'][n])
-						FIBREID.append(ALLDATA[6].data['FIBREID'][n])
-						CNAME.append(ALLDATA[6].data['CNAME'][n])
-		else:
-			print("Processing BA stars specified in target list")
-			targlist = np.genfromtxt(target_list, dtype=None, encoding=None)
-			BA = []
-			NSPEC = []
-			FIBREID = []
-			CNAME = []
-			with fits.open(data_file) as ALLDATA:
-				for targ in targlist:
-					try: 
-						idx=list(ALLDATA[6].data['FIBREID']).index(targ)
-						BA.append(ALLDATA[6].data['TARGID'][idx])
-						NSPEC.append(ALLDATA[6].data['Nspec'][idx])
-						FIBREID.append(ALLDATA[6].data['FIBREID'][idx])
-						CNAME.append(ALLDATA[6].data['CNAME'][idx])
-					except:
-						try:
-							idx=list(ALLDATA[6].data['TARGID']).index(targ)
-							BA.append(ALLDATA[6].data['TARGID'][idx])
-							NSPEC.append(ALLDATA[6].data['Nspec'][idx])
-							FIBREID.append(ALLDATA[6].data['FIBREID'][idx])
-							CNAME.append(ALLDATA[6].data['CNAME'][idx])
-						except:	
-							print(str(targ)+": Cant find either FIBREID or TARGID in input table.")
 
-	ALLDATA = None
-	info = None
-	wavelength = None
-	targetmask = None
-	def set_globals():
-	    global ALLDATA
-	    global info 
-	    global wavelength
-	    global targetmask
-
-	    with fits.open(data_file) as ALLDATA:
-		    head0 = ALLDATA[0].header
-		    info = ALLDATA[6].data
-		    data1 = ALLDATA[1].data
-		    head1 = ALLDATA[1].header
-		    wave0 = head1['CRVAL1']  
-		    increm = head1['CD1_1']
-		    wavelength = np.array([wave0+increm*a for a in range(len(data1[1]))])
-		    targetmask = (wavelength > min_wav) & (wavelength < max_wav)
-		    wavelength = wavelength[targetmask]
-
-
-	if multiprocess==True:
-		from multiprocessing import Pool
-		if __name__ ==  '__main__':
-			pool = Pool(processes=process_no, initializer=set_globals)
-			it = pool.imap_unordered(mcmc_one, BA)
-			for nn,i in enumerate(range(len(BA))):
-				it.next()
-			make_output_fits()
-			print(datetime.now() - startTime)
-
-
+if __name__ ==  '__main__':
+	# checking if results table already exists
+	if os.path.exists(write_directory+'results/'+os.path.splitext(os.path.basename(args.infile[0]))[0]+'_ptmcmc.fits'):
+		print('WARNING: result table already exists, ending process.')
+		sys.exit()
+	if target_list == 'all':
+		print("Processing all BA stars in fits file")
+		BA = []
+		with fits.open(data_file) as ALLDATA:
+			for n,i in enumerate(ALLDATA[6].data['TARGID']):
+				if 'LR-BA' in i:
+					BA.append(i)
 	else:
-		set_globals()
-		for nn,i in enumerate(BA):
-			mcmc_one(i)
+		print("Processing BA stars specified in target list")
+		targlist = np.genfromtxt(target_list, dtype=None, encoding=None)
+		BA = []
+		with fits.open(data_file) as ALLDATA:
+			for targ in targlist:
+				try: 
+					idx=list(ALLDATA[6].data['FIBREID']).index(targ)
+					BA.append(ALLDATA[6].data['TARGID'][idx])
+				except:
+					try:
+						idx=list(ALLDATA[6].data['TARGID']).index(targ)
+						BA.append(ALLDATA[6].data['TARGID'][idx])
+					except:	
+						print(str(targ)+": Cant find either FIBREID or TARGID in input table.")
+
+ALLDATA = None
+info = None
+wavelength = None
+targetmask = None
+
+def set_globals():
+    global ALLDATA
+    global info 
+    global wavelength
+    global targetmask
+
+    with fits.open(data_file) as ALLDATA:
+	    head0 = ALLDATA[0].header
+	    info = ALLDATA[6].data
+	    data1 = ALLDATA[1].data
+	    head1 = ALLDATA[1].header
+	    wave0 = head1['CRVAL1']  
+	    increm = head1['CD1_1']
+	    wavelength = np.array([wave0+increm*a for a in range(len(data1[1]))])
+	    targetmask = (wavelength > min_wav) & (wavelength < max_wav)
+	    wavelength = wavelength[targetmask]
+
+if multiprocess==True:
+	from multiprocessing import Pool
+	if __name__ ==  '__main__':
+		pool = Pool(processes=process_no, initializer=set_globals)
+		it = pool.imap_unordered(mcmc_one, BA)
+		for nn,i in enumerate(range(len(BA))):
+			it.next()
 		make_output_fits()
 		print(datetime.now() - startTime)
+
+else:
+	set_globals()
+	for nn,i in enumerate(BA):
+		mcmc_one(i)
+	make_output_fits()
+	print(datetime.now() - startTime)

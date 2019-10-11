@@ -21,10 +21,10 @@ progress_bar = True
 
 ### MCMC SAMPLE PARAMETERS ### 
 
-nwalkers = 20		# number of walkers
-burn = 25			# number of burn-in steps
-runs = 200			# number of steps
-ntemps = 3			# number of temperatures
+nwalkers = 200		# number of walkers
+burn = 250			# number of burn-in steps
+runs = 2000			# number of steps
+ntemps = 5			# number of temperatures
 
 ### PARAMETER BOUNDARIES ###
 
