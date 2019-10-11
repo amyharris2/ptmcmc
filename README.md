@@ -18,15 +18,14 @@ Files included:
 
 	- ptmcmc.py (16KB)
 		- this is the ptmcmc module that computes stellar parameters of input spectra. Some inputs 
-		are required, see below. The ptmcmc runs with the provided template set as default, but it 
-		can process (crop, rotationally broaden, smooth and rebin) your own templates, and put the 
-		processed templates into a grid for use with ptmcmc. See parameters.py. 
+		are required in order to run, see 'Usage' below. The ptmcmc runs with the provided template
+		set as default, but it can process (crop, rotationally broaden, smooth and rebin) your own
+		templates, and put the processed templates into a grid for use with ptmcmc. See parameters.py.
 
 	- parameters.py (5KB)
-		- this is where the parameters for the ptmcmc module are stored. In the most basic case, 
-		only the path to the fits file containing spectral data, and the path to a write directory, 
-		are required. The rest of the parameters are suitable for the default case of analysing the CaT
-		region of WEAVE-like LR BA spectra - tweak if you desire.
+		- this is where the parameters for the ptmcmc module are stored. The default parameters are 
+		suitable for the case of analysing the CaT region of WEAVE-like LR BA spectra - tweak if you
+		desire.
 
 	- example folder (0.1KB)
 		- targets folder including a list of specific spectra to analyse. Put the stacked_1003689.fit
@@ -82,81 +81,95 @@ Installation:
 
 
 Usage:
-
+	Run ptmcmc using something like:
+	'run ptmcmc --infile example/targets/stacked_1003689.fit --outdir example/results/ --targlist example/targets/target_list' 
+	
 	The inputs:
-		The following are the minimum required inputs to be entered in parameters.py:
-			- the path to a fits table to that contains the spectral information. The input table 
-			is expected to be of the form provided by CASU; it should have the following extensions:
+		--infile: the path to a fits table to that contains the spectral information. The input table 
+		is expected to be of the form provided by CASU; it should have the following extensions:
 				
-				-Extension 0 (PHU): This is the primary header unit. There will be no data in 
-				this HDU. The header will have all the general information about the observation. 
+			-Extension 0 (PHU): This is the primary header unit. There will be no data in 
+			this HDU. The header will have all the general information about the observation. 
 
-				- Extension 1 (DATA): Final wavelength calibrated, sky subtracted and heliocentric
-				corrected spectra. Each spectrum is a row in the image and the number of rows is 
-				the number of fibres that were used to observe both objects and sky patches. All 
-				spectra are on a linear wavelength scale with exactly the same dispersion and 
-				wavelength range. The wavelength is in units of Angstroms. The spectral flux is in 
-				units of ADUs. 
+			- Extension 1 (DATA): Final wavelength calibrated, sky subtracted and heliocentric
+			corrected spectra. Each spectrum is a row in the image and the number of rows is 
+			the number of fibres that were used to observe both objects and sky patches. All 
+			spectra are on a linear wavelength scale with exactly the same dispersion and 
+			wavelength range. The wavelength is in units of Angstroms. The spectral flux is in 
+			units of ADUs. 
 
-				- Extension 2 (IVAR): The inverse variance of each spectrum (similar to a weight
-				map). The variance was defined by the optimal extraction algorithm used and modified 
-				during all subsequent processing. Bad pixels will be flagged with an inverse variance
-				of zero. 
+			- Extension 2 (IVAR): The inverse variance of each spectrum (similar to a weight
+			map). The variance was defined by the optimal extraction algorithm used and modified 
+			during all subsequent processing. Bad pixels will be flagged with an inverse variance
+			of zero. 
 
-				- Extension 3 (DATA_NOSS): The same spectra as in the first extension, but before sky
-				subtraction. These are only included as a means of assessing the quality of the sky
-				correction within an OB. It also allows for an alternative treatment of the background 
-				subtraction by the user. In files that represent the coaddition of spectra over many 
-				nights, these lose their meaning and will not be included. 
+			- Extension 3 (DATA_NOSS): The same spectra as in the first extension, but before sky
+			subtraction. These are only included as a means of assessing the quality of the sky
+			correction within an OB. It also allows for an alternative treatment of the background 
+			subtraction by the user. In files that represent the coaddition of spectra over many 
+			nights, these lose their meaning and will not be included. 
 
-				- Extension 4 (IVAR_NOSS): The inverse variance of the above. As with the spectra, 
-				these will only be included in files from a single OB. In files that represent the 
-				coaddition of spectra over many nights, these lose their meaning and will not be 
-				included. In files that represent the coaddition of spectra over many nights, these 
-				lose their meaning and will not be included. 
+			- Extension 4 (IVAR_NOSS): The inverse variance of the above. As with the spectra, 
+			these will only be included in files from a single OB. In files that represent the 
+			coaddition of spectra over many nights, these lose their meaning and will not be 
+			included. In files that represent the coaddition of spectra over many nights, these 
+			lose their meaning and will not be included. 
 
-				- Extension 5 (Calibration): Function used to calibrate the spectra obtained from WD.
+			- Extension 5 (Calibration): Function used to calibrate the spectra obtained from WD.
 
-				- Extension 6 (Fibinfo): A binary FITS table with information about each fibre that 
-				was used in the observation 
+			- Extension 6 (Fibinfo): A binary FITS table with information about each fibre that 
+			was used in the observation 
 
-			- the path to the desired write directory.
+		--outdir: the path to the desired write directory.
+		
+		--targlist: the path to a list of FIBREIDs or TARGIDs of the objects to be analysed. Alternatively,
+		enter 'all' to analyse all BA stars in the input file. 
+		
+		--params: (optional) the path to the parameters.py file to be used. Default is the parameters.py
+		file in the location that it is being run. 
 
 
 	To run the example:
 		- Ensure that you have downloaded the stacked_1003689.fit file (see 'Additional files to be
 		downloaded', above). Place this in example/targets/.
-		- The default parameters for the ptmcmc.py module are those for the example.
-		- Run ptmcmc.py from within the ptmcmc directory in the case of the example.
+		- Run ptmcmc.py from within the ptmcmc directory in the case of the example, using the python
+		command 'run ptmcmc --infile example/targets/stacked_1003689.fit --outdir example/results/ 
+		--targlist example/targets/target_list'.
 		- Once the results have been written, ptmcmc.py will not re-run unless the results are deleted.
 
 
 	The outputs:
-		The outputs from running ptmcmc.py are written to the specified write directory, and consist 
-		of the following for each analysed spectrum:
+		A results file is written for each analysed spectrum. At the end of the run a fits file is
+		created, named 'all_results.fits', that concatenates the results of all analysed spectra into 
+		one big table. The outputs are written to the specified write directory.
+		
+		For each analysed spectrum, the outputs are:
 			- <SPECTRUM>_result (in <WRITE_DIRECTORY>/results/)
 				This is a text file containing the results for the analysed spectrum. The 
 				columns are as follows:
-				(1)  name: the analysed spectrum
-				(2)  acceptance fraction: the mean fraction of proposed walker jumps that are accepted, should be between 0.2-0.5 for efficient sampling
-				(3)  Teff: median value of marginalised posterior distribution for effective temperature (K)
-				(4)  Teff_minus: 1-sigma negative uncertainty on Teff (K)*, i.e. Teff +/- Teff_plus / Teff_minus
-				(5)  Teff_plus: 1-sigma positive uncertainty on Teff (K)**, i.e. Teff +/- Teff_plus / Teff_minus
-				(6)  logg: median value of marginalised posterior distribution for surface gravity log(g)
-				(7)  logg_minus: 1-sigma negative uncertainty on logg*, i.e. logg +/- logg_plus / logg_minus
-				(8)  logg_plus: 1-sigma positive uncertainty on logg**, i.e. logg +/- logg_plus / logg_minus
-				(9)  vsini: median value of marginalised posterior distribution for projected rotational velocity (km/s) 
-				(10) vsini_minus: 1-sigma negative uncertainty on vsini (km/s)*, i.e. vsini +/- vsini_plus / vsini_minus
-				(11) vsini_plus: 1-sigma positive uncertainty on vsini (km/s)**, i.e. vsini +/- vsini_plus / vsini_minus
-				(12) RV: median value of marginalised posterior distribution for radial/line-of-sight velocity (km/s)
-				(13) RV_minus: 1-sigma negative uncertainty on RV (km/s)*, i.e. RV +/- RV_plus / RV_minus
-				(14) RV_plus: 1-sigma positive uncertainty on RV (km/s)**, i.e. RV +/- RV_plus / RV_minus
-				(15) slope: median value of marginalised posterior distribution for slope of mapping function 
-				(16) slope_minus: 1-sigma negative uncertainty on slope*, i.e. slope +/- slope_plus / slope_minus
-				(17) slope_plus: 1-sigma positive uncertainty on slope**, i.e. slope +/- slope_plus / slope_minus
-				(18) intercept: median value of marginalised posterior distribution for intercept of mapping function
-				(19) intercept_minus: 1-sigma negative uncertainty on intercept*, i.e. intercept +/- intercept_plus / intercept_minus
-				(20) intercept_plus: 1-sigma positive uncertainty on intercept**, i.e. intercept +/- intercept_plus / intercept_minus
+				(1)  NSPEC
+				(2)  FIBREID
+				(3)  CNAME
+				(4)  TARGID: the analysed spectrum
+				(5)  acceptance fraction: the mean fraction of proposed walker jumps that are accepted, should be between 0.2-0.5 for efficient sampling
+				(6)  Teff: median value of marginalised posterior distribution for effective temperature (K)
+				(7)  Teff_minus: 1-sigma negative uncertainty on Teff (K)*, i.e. Teff +/- Teff_plus / Teff_minus
+				(8)  Teff_plus: 1-sigma positive uncertainty on Teff (K)**, i.e. Teff +/- Teff_plus / Teff_minus
+				(9)  logg: median value of marginalised posterior distribution for surface gravity log(g)
+				(10)  logg_minus: 1-sigma negative uncertainty on logg*, i.e. logg +/- logg_plus / logg_minus
+				(11)  logg_plus: 1-sigma positive uncertainty on logg**, i.e. logg +/- logg_plus / logg_minus
+				(12)  vsini: median value of marginalised posterior distribution for projected rotational velocity (km/s) 
+				(13) vsini_minus: 1-sigma negative uncertainty on vsini (km/s)*, i.e. vsini +/- vsini_plus / vsini_minus
+				(14) vsini_plus: 1-sigma positive uncertainty on vsini (km/s)**, i.e. vsini +/- vsini_plus / vsini_minus
+				(15) RV: median value of marginalised posterior distribution for radial/line-of-sight velocity (km/s)
+				(16) RV_minus: 1-sigma negative uncertainty on RV (km/s)*, i.e. RV +/- RV_plus / RV_minus
+				(17) RV_plus: 1-sigma positive uncertainty on RV (km/s)**, i.e. RV +/- RV_plus / RV_minus
+				(18) slope: median value of marginalised posterior distribution for slope of mapping function 
+				(19) slope_minus: 1-sigma negative uncertainty on slope*, i.e. slope +/- slope_plus / slope_minus
+				(20) slope_plus: 1-sigma positive uncertainty on slope**, i.e. slope +/- slope_plus / slope_minus
+				(21) intercept: median value of marginalised posterior distribution for intercept of mapping function
+				(22) intercept_minus: 1-sigma negative uncertainty on intercept*, i.e. intercept +/- intercept_plus / intercept_minus
+				(23) intercept_plus: 1-sigma positive uncertainty on intercept**, i.e. intercept +/- intercept_plus / intercept_minus
 
 				* calculated as the median less the 16th percentile of the marginalised posterior distribution
 				** calculated as the 84th percentile less the median of the marginalised posterior distribution
