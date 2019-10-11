@@ -82,7 +82,7 @@ Installation:
 
 Usage:
 	Run ptmcmc using something like:
-	'run ptmcmc --infile example/targets/stacked_1003689.fit --outdir example/results/ --targlist example/targets/target_list' 
+	'python ptmcmc.py --infile example/targets/stacked_1003689.fit --outdir example/results/ --targlist example/targets/target_list' 
 	
 	The inputs:
 		--infile: the path to a fits table to that contains the spectral information. The input table 
@@ -132,15 +132,15 @@ Usage:
 	To run the example:
 		- Ensure that you have downloaded the stacked_1003689.fit file (see 'Additional files to be
 		downloaded', above). Place this in example/targets/.
-		- Run ptmcmc.py from within the ptmcmc directory in the case of the example, using the python
-		command 'run ptmcmc --infile example/targets/stacked_1003689.fit --outdir example/results/ 
-		--targlist example/targets/target_list'.
+		- Run ptmcmc.py from within the ptmcmc directory in the case of the example, using:
+			'python ptmcmc.py --infile example/targets/stacked_1003689.fit --outdir example/results/
+			--targlist example/targets/target_list'
 		- Once the results have been written, ptmcmc.py will not re-run unless the results are deleted.
 
 
 	The outputs:
 		A results file is written for each analysed spectrum. At the end of the run a fits file is
-		created, named 'all_results.fits', that concatenates the results of all analysed spectra into 
+		created, named e.g. 'stacked_1003689_ptmcmc.fits', that concatenates the results of all analysed spectra into 
 		one big table. The outputs are written to the specified write directory.
 		
 		For each analysed spectrum, the outputs are:
@@ -173,12 +173,6 @@ Usage:
 
 				* calculated as the median less the 16th percentile of the marginalised posterior distribution
 				** calculated as the 84th percentile less the median of the marginalised posterior distribution
-
-				All <SPECTRUM>_result files can be easily concatenated to one big table using e.g. the following commands in <WRITE_DIRECTORY>/results/ 
-				UNIX:
-					'cat *_results > <BIG_TABLE_NAME>'
-				WINDOWS:
-					'type *_results > <BIG_TABLE_NAME>'
 
 			- <SPECTRUM>_spectrum.png (in <WRITE_DIRECTORY>/plots/)
 				This is a plot of the analysed region of the spectrum, along with its best-fit template match which has been mapped onto the spectrum.
